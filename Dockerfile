@@ -1,6 +1,3 @@
-EXPOSE 8080
-CMD ["python", "main.py"]
-
 # Usar una imagen base de Python
 FROM python:3.10-slim
 
@@ -14,5 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el código de la aplicación
 COPY . .
 
+# Exponer el puerto que usará Cloud Run
+EXPOSE 8080
+
 # Comando para ejecutar la aplicación con Uvicorn
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
