@@ -13,11 +13,13 @@ VERIFY_TOKEN = os.environ.get('VERIFY_TOKEN')
 APP_SECRET = os.environ.get('APP_SECRET')
 
 # Validar que las variables de entorno existen
+"""
 if not all([PROJECT_ID, TOPIC_ID, VERIFY_TOKEN, APP_SECRET]):
     missing_vars = [name for name, val in {'PROJECT_ID': PROJECT_ID, 'TOPIC_ID': TOPIC_ID, 'VERIFY_TOKEN': VERIFY_TOKEN, 'APP_SECRET': APP_SECRET}.items() if not val]
     print(f"Error fatal: Faltan las siguientes variables de entorno: {', '.join(missing_vars)}")
     sys.exit(1) # Salir con un código de error
-
+"""
+print("DEBUG ENV:", PROJECT_ID, TOPIC_ID, VERIFY_TOKEN, APP_SECRET)
 
 # Inicialización del cliente de Pub/Sub
 publisher = pubsub_v1.PublisherClient()
