@@ -1,3 +1,6 @@
+EXPOSE 8080
+CMD ["python", "main.py"]
+
 # Usar una imagen base de Python
 FROM python:3.10-slim
 
