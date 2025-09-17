@@ -16,6 +16,10 @@ app = FastAPI()
 def health_check():
     return {"status": "ok", "message": "Service is running"}
 
+@app.post("/")
+def root(payload: dict):
+    return {"message": f"Hola {payload['name']}"}
+
 def is_valid_signature(signature: str, payload: bytes) -> bool:
     if not APP_SECRET:
         return False
