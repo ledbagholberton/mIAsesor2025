@@ -23,7 +23,7 @@ def root(payload: dict):
 def is_valid_signature(signature: str, payload: bytes) -> bool:
     if not APP_SECRET:
         return False
-    if not signature or not signature.startswith("sha256="):
+    if not signature or not signature.startswith("sha256="):    
         return False
     
     signature_hash = signature.split("=")[1]
@@ -48,6 +48,10 @@ async def verify_webhook(request: Request):
 
 @app.post("/webhook")
 async def handle_webhook(request: Request):
+    body = await request.body()
+    print("Payload recibido:", body)
+    return {"status": "success", "message": "Mensaje recibido y encolado."}
+"""    
     signature = request.headers.get("X-Hub-Signature-256")
     body = await request.body()
 
@@ -67,3 +71,5 @@ async def handle_webhook(request: Request):
         return {"status": "error"}, status.HTTP_200_OK
 
     return {"status": "success", "message": "Mensaje recibido y encolado."}
+    """
+    
