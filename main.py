@@ -14,7 +14,7 @@ app = FastAPI()
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "Service is running V5"}
+    return {"status": "ok", "message": "Service is running V9"}
 
 @app.post("/")
 def root(payload: dict):
@@ -72,4 +72,3 @@ async def handle_webhook(request: Request):
 
     return {"status": "success", "message": "Mensaje recibido y encolado."}
     """
-    
