@@ -14,7 +14,7 @@ app = FastAPI()
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "Service is running"}
+    return {"status": "ok", "message": "Service is running V5"}
 
 @app.post("/")
 def root(payload: dict):
