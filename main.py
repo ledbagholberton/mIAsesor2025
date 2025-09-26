@@ -36,7 +36,7 @@ def health_check():
 
     return {
         "status": "ok",
-        "message": "Service is running V12",
+        "message": "Service is running V13",
         "mensajes_en_colados": mensajes or "No hay mensajes pendientes"
     }
 
@@ -77,7 +77,7 @@ async def handle_webhook(request: Request):
 
     try:
         publisher = pubsub_v1.PublisherClient()
-        topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+        topic_path = publisher.topic_path(PROJECT_ID, "webhook-topic")
 
         # Publicar el mensaje en Pub/Sub
         future = publisher.publish(topic_path, data=body)
