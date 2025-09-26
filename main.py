@@ -9,12 +9,13 @@ PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
 TOPIC_ID = os.getenv("PUBSUB_TOPIC_ID")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 APP_SECRET = os.getenv("APP_SECRET")
+SUBSCRIPTION_ID = "webhook-sub"
 
 app = FastAPI()
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "Service is running V10"}
+    return {"status": "ok", "message": "Service is running V11"}
 
 @app.post("/")
 def root(payload: dict):
@@ -48,28 +49,23 @@ async def verify_webhook(request: Request):
 
 @app.post("/webhook")
 async def handle_webhook(request: Request):
-    body = await request.body()
-    print("Payload recibido:", body)
-    return {"status": "success", "message": "Mensaje recibido y encolado."}
-
-"""
-    signature = request.headers.get("X-Hub-Signature-256")
-    body = await request.body()
-
-    if not is_valid_signature(signature, body):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Firma de Webhook no válida."
-        )
+    body = await request.body()  # contenido crudo del webhook
+    print("📥 Payload recibido:", body.decode("utf-8"))
 
     try:
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-        publisher.publish(topic_path, data=body)
-        print("Mensaje publicado en Pub/Sub de forma asíncrona.")
-    except Exception as e:
-        print(f"Error al publicar en Pub/Sub: {e}")
-        return {"status": "error"}, status.HTTP_200_OK
 
-    return {"status": "success", "message": "Mensaje recibido y encolado."}
-"""
+        # Publicar el mensaje en Pub/Sub
+        future = publisher.publish(topic_path, data=body)
+        message_id = future.result()  # opcional: esperar a que confirme
+        print(f"✅ Mensaje encolado en Pub/Sub con ID: {message_id}")
+
+    except Exception as e:
+        print(f"❌ Error al publicar en Pub/Sub: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al encolar mensaje"
+        )
+
+    return {"status": "success", "message": "Mensaje recibido y encolado en Pub/Sub"}
