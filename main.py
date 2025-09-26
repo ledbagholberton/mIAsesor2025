@@ -15,7 +15,30 @@ app = FastAPI()
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "Service is running V11"}
+    subscriber = pubsub_v1.SubscriberClient()
+    subscription_path = subscriber.subscription_path(PROJECT_ID, SUBSCRIPTION_ID)
+
+    # Leer mensajes con pull (máximo 5 en este ejemplo)
+    response = subscriber.pull(
+        request={"subscription": subscription_path, "max_messages": 5}
+    )
+
+    mensajes = []
+    for msg in response.received_messages:
+        data = msg.message.data.decode("utf-8")
+        print(f"📩 Mensaje recibido: {data}")  # imprime en consola
+        mensajes.append(data)
+
+        # Confirmar que ya procesaste este mensaje
+        subscriber.acknowledge(
+            request={"subscription": subscription_path, "ack_ids": [msg.ack_id]}
+        )
+
+    return {
+        "status": "ok",
+        "message": "Service is running V12",
+        "mensajes_en_colados": mensajes or "No hay mensajes pendientes"
+    }
 
 @app.post("/")
 def root(payload: dict):
