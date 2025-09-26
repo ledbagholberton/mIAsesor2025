@@ -14,7 +14,7 @@ app = FastAPI()
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "Service is running V9"}
+    return {"status": "ok", "message": "Service is running V10"}
 
 @app.post("/")
 def root(payload: dict):
@@ -48,6 +48,11 @@ async def verify_webhook(request: Request):
 
 @app.post("/webhook")
 async def handle_webhook(request: Request):
+    body = await request.body()
+    print("Payload recibido:", body)
+    return {"status": "success", "message": "Mensaje recibido y encolado."}
+
+"""
     signature = request.headers.get("X-Hub-Signature-256")
     body = await request.body()
 
@@ -66,10 +71,5 @@ async def handle_webhook(request: Request):
         print(f"Error al publicar en Pub/Sub: {e}")
         return {"status": "error"}, status.HTTP_200_OK
 
-    return {"status": "success", "message": "Mensaje recibido y encolado."}
-
-"""
-    body = await request.body()
-    print("Payload recibido:", body)
     return {"status": "success", "message": "Mensaje recibido y encolado."}
 """
